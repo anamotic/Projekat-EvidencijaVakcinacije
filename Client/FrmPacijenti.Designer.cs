@@ -40,6 +40,7 @@
             rbStaraOsoba = new RadioButton();
             label2 = new Label();
             rbSvi = new RadioButton();
+            textBox1 = new TextBox();
             ((System.ComponentModel.ISupportInitialize)dgvPacijenti).BeginInit();
             SuspendLayout();
             // 
@@ -47,10 +48,10 @@
             // 
             dgvPacijenti.BackgroundColor = Color.White;
             dgvPacijenti.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvPacijenti.Location = new Point(12, 39);
+            dgvPacijenti.Location = new Point(12, 143);
             dgvPacijenti.Name = "dgvPacijenti";
             dgvPacijenti.RowHeadersWidth = 51;
-            dgvPacijenti.Size = new Size(702, 436);
+            dgvPacijenti.Size = new Size(702, 332);
             dgvPacijenti.TabIndex = 0;
             // 
             // btnDodajPacijenta
@@ -149,7 +150,7 @@
             label1.AutoSize = true;
             label1.BackColor = Color.White;
             label1.Font = new Font("Footlight MT Light", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.Location = new Point(262, 9);
+            label1.Location = new Point(269, 34);
             label1.Name = "label1";
             label1.Size = new Size(156, 24);
             label1.TabIndex = 10;
@@ -196,12 +197,20 @@
             rbSvi.TextAlign = ContentAlignment.MiddleCenter;
             rbSvi.UseVisualStyleBackColor = false;
             // 
+            // textBox1
+            // 
+            textBox1.Location = new Point(350, 86);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(125, 27);
+            textBox1.TabIndex = 14;
+            // 
             // FrmPacijenti
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.seamless_pattern_with_flat_medical_icons_medicine_or_health_insurance_research_background_healthcare_and_laboratory_equipment_digital_paper_health_check_or_treatment_texture_vector;
             ClientSize = new Size(918, 661);
+            Controls.Add(textBox1);
             Controls.Add(rbSvi);
             Controls.Add(rbStaraOsoba);
             Controls.Add(dgvPacijenti);
@@ -236,6 +245,7 @@
         public RadioButton rbStaraOsoba;
         public Label label2;
         public RadioButton rbSvi;
+        public TextBox textBox1;
 
         public DataGridView DgvPacijenti { get => dgvPacijenti; set => dgvPacijenti = value; }
         public Button BtnDodaj { get => btnDodajPacijenta; set => btnDodajPacijenta = value; }

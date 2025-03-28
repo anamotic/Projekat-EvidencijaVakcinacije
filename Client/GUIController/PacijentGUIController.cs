@@ -12,6 +12,9 @@ namespace Client.UIKontrole
         FrmPacijenti forma;
         UCKontrolaPacijenata kontrolaPacijenta;
         private Pacijent selektovaniPacijent;
+        BindingList<Pacijent> pacijenti;
+        BindingList<Pacijent> pacijentiprikaz;
+
 
         public static PacijentGUIController Instance
         {
@@ -29,9 +32,10 @@ namespace Client.UIKontrole
                 forma = new FrmPacijenti();
                 forma.AutoSize = true;
 
-                BindingList<Pacijent> pacijenti = new BindingList<Pacijent>(Communication.Instance.UcitajListuPacijenata());
+                pacijenti = new BindingList<Pacijent>(Communication.Instance.UcitajListuPacijenata());
+            pacijentiprikaz = pacijenti;
 
-                forma.dgvPacijenti.DataSource = pacijenti;
+                forma.dgvPacijenti.DataSource = pacijentiprikaz;
 
                 forma.dgvPacijenti.Columns["starosnaGrupa"].HeaderText = "Starosna grupa";
                 forma.dgvPacijenti.Columns["DatumRodjenja"].HeaderText = "Datum rodjenja";
@@ -50,6 +54,7 @@ namespace Client.UIKontrole
                 forma.btnIzmeni.Click += IzmeniPacijenta;
                 forma.btnObrisi.Click += ObrisiPacijenta;
                 forma.btnGlavna.Click += BtnGlavna_Click;
+            forma.textBox1.TextChanged += Pretrazi_Pacijente;
                 forma.Show();
 
             } 
@@ -59,6 +64,28 @@ namespace Client.UIKontrole
             forma.Close();
             MainGUIController.Instance.ShowFrmMain();
           }
+
+        private void Pretrazi_Pacijente(object sender, EventArgs e)
+        {
+            string unos = forma.textBox1.Text.ToLower().Trim();
+
+            if (string.IsNullOrWhiteSpace(unos))
+            {
+                pacijentiprikaz = pacijenti;
+            }
+            else
+            {
+                var filtrirani = pacijenti
+                    .Where(p => (p.Ime != null && p.Ime.ToLower().Contains(unos)) ||
+                                (p.Prezime != null && p.Prezime.ToLower().Contains(unos)))
+                    .ToList();
+
+                pacijentiprikaz = new BindingList<Pacijent>(filtrirani);
+            }
+
+            forma.dgvPacijenti.DataSource = pacijentiprikaz;
+        }
+
 
         private void BtnNazad_Click(object sender, EventArgs e)
         {
