@@ -38,6 +38,7 @@
             rbSve = new RadioButton();
             dgvSmene = new DataGridView();
             label1 = new Label();
+            label2 = new Label();
             ((System.ComponentModel.ISupportInitialize)dgvSmene).BeginInit();
             SuspendLayout();
             // 
@@ -45,11 +46,10 @@
             // 
             cmbRadnici.Font = new Font("Footlight MT Light", 10.2F);
             cmbRadnici.FormattingEnabled = true;
-            cmbRadnici.Location = new Point(23, 92);
+            cmbRadnici.Location = new Point(19, 92);
             cmbRadnici.Name = "cmbRadnici";
-            cmbRadnici.Size = new Size(168, 27);
+            cmbRadnici.Size = new Size(170, 27);
             cmbRadnici.TabIndex = 0;
-            cmbRadnici.Text = "Zdravstveni radnik";
             // 
             // btnDodaj
             // 
@@ -148,11 +148,22 @@
             label1.TabIndex = 9;
             label1.Text = "Smene radnika";
             // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Footlight MT Light", 10F);
+            label2.Location = new Point(32, 70);
+            label2.Name = "label2";
+            label2.Size = new Size(142, 19);
+            label2.TabIndex = 10;
+            label2.Text = "Zdravstveni radnik";
+            // 
             // UCPregledSmena
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Linen;
+            Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(dgvSmene);
             Controls.Add(rbSve);
@@ -182,6 +193,7 @@
         private RadioButton rbSve;
         private DataGridView dgvSmene;
         private Label label1;
+        private Label label2;
 
         public Label Label1 { get => label1; set => label1 = value; }
         public Button BtnDodaj { get => btnDodaj; set => btnDodaj = value; }

@@ -151,18 +151,17 @@ namespace Client.GUIController
             pregledSmena.DgvSmene.Columns["IDLok"].Visible = false;
             pregledSmena.DgvSmene.Columns["Lokacija"].Visible = false;
             pregledSmena.DgvSmene.Columns["ZdravstveniRadnik"].Visible = false;
+            pregledSmena.DgvSmene.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
             pregledSmena.RbPredstojece.CheckedChanged += (s, e) => { if (pregledSmena.RbPredstojece.Checked) FilterSmene(); };
             pregledSmena.RbPrethodne.CheckedChanged += (s, e) => { if (pregledSmena.RbPrethodne.Checked) FilterSmene(); };
             pregledSmena.RbSve.CheckedChanged += (s, e) => { if (pregledSmena.RbSve.Checked) FilterSmene(); };
 
             List<ZdravstveniRadnik> radnici = Communication.Instance.UcitajListuZRadnika();
-            ZdravstveniRadnik placeholderRadnik = new ZdravstveniRadnik { Id = -1, Ime = "Zdravstveni", Prezime = "radnik" };
-            radnici.Insert(0, placeholderRadnik);
-
             pregledSmena.CmbRadnici.DataSource = radnici;
             pregledSmena.CmbRadnici.DisplayMember = "ImePrezime";
             pregledSmena.CmbRadnici.ValueMember = "Id";
+            pregledSmena.CmbRadnici.SelectedIndex = -1;
             pregledSmena.CmbRadnici.SelectedIndexChanged += cmbRadnici_IzabraniRadnik;
 
             pregledSmena.BtnDodaj.Click += DodajSmenuKlik;
@@ -175,10 +174,18 @@ namespace Client.GUIController
             if (pregledSmena.CmbRadnici.SelectedItem is ZdravstveniRadnik izabraniRadnik)
             {
                 List<ZRLok> sveSmene = Communication.Instance.UcitajListuZRLok(selektovanaLokacija.Id);
-                IEnumerable<ZRLok> filtriraneSmene = sveSmene.Where(sm => sm.ZdravstveniRadnik.Id == izabraniRadnik.Id);
-                pregledSmena.DgvSmene.DataSource = new BindingList<ZRLok>(filtriraneSmene.ToList());
+                if (izabraniRadnik.Id == -1)
+                {
+                    pregledSmena.DgvSmene.DataSource = new BindingList<ZRLok>(sveSmene);
+                }
+                else
+                {
+                    IEnumerable<ZRLok> filtriraneSmene = sveSmene.Where(sm => sm.IDZR == izabraniRadnik.Id);
+                    pregledSmena.DgvSmene.DataSource = new BindingList<ZRLok>(filtriraneSmene.ToList());
+                }
             }
         }
+
         private void FilterSmene()
         {
             List<ZRLok> sveSmene = Communication.Instance.UcitajListuZRLok(selektovanaLokacija.Id);
@@ -207,12 +214,17 @@ namespace Client.GUIController
                 DialogResult result = MessageBox.Show("Da li ste sigurni da želite da obrišete smenu?", "Potvrda brisanja", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (result == DialogResult.Yes)
                 {
-                    ZRLok odabranaSmena = pregledSmena.DgvSmene.SelectedRows[0].DataBoundItem as ZRLok;
-                    Response res = Communication.Instance.ObrisiZRLok(odabranaSmena);
+                    ZRLok odabrana = pregledSmena.DgvSmene.SelectedRows[0].DataBoundItem as ZRLok;
+                    if (odabrana.DatumSmena.Date <= DateTime.Now.Date)
+                    {
+                        MessageBox.Show("Nije moguće obrisati smenu koja je već prošla!", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    Response res = Communication.Instance.ObrisiZRLok(odabrana);
                     if (res.Exception == null)
                     {
                         MessageBox.Show("Smena je obrisana.", "Obaveštenje", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        BindingList<ZRLok> smene = new BindingList<ZRLok>(Communication.Instance.UcitajListuZRLok(odabranaSmena.Id));
+                        BindingList<ZRLok> smene = new BindingList<ZRLok>(Communication.Instance.UcitajListuZRLok(selektovanaLokacija.Id));
                         pregledSmena.DgvSmene.DataSource = smene;
                     }
                     else
@@ -250,8 +262,7 @@ namespace Client.GUIController
 
             kontrolaSmena.BtnNazad.Click += NazadKlik;
             kontrolaSmena.BtnSacuvaj.Click += SacuvajSmenuKlik;
-            
-          }
+        }
         private void SacuvajSmenuKlik(object sender, EventArgs e)
         {
             if (!(kontrolaSmena.CmbZdravstveniRadnik.SelectedItem is ZdravstveniRadnik radnik) || radnik.Id == -1)
@@ -286,7 +297,6 @@ namespace Client.GUIController
                 BindingList<ZRLok> smene = new BindingList<ZRLok>(Communication.Instance.UcitajListuZRLok(selektovanaLokacija.Id));
                 pregledSmena.DgvSmene.DataSource = smene;
                 pregledSmena.DgvSmene.Refresh();
-
             }
             else
             {
@@ -301,12 +311,14 @@ namespace Client.GUIController
                 MessageBox.Show("Morate izabrati smenu koju želite da izmenite.", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+
             ZRLok odabrana = pregledSmena.DgvSmene.SelectedRows[0].DataBoundItem as ZRLok;
             if (odabrana.DatumSmena.Date <= DateTime.Now.Date)
             {
                 MessageBox.Show("Nije moguće menjati smenu koja je već prošla!", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+
             this.selektovanaSmena = odabrana;
 
             kontrolaSmena = new UCKontrolaSmena();
@@ -317,20 +329,32 @@ namespace Client.GUIController
             kontrolaSmena.CmbZdravstveniRadnik.DataSource = radnici;
             kontrolaSmena.CmbZdravstveniRadnik.DisplayMember = "ImePrezime";
             kontrolaSmena.CmbZdravstveniRadnik.ValueMember = "Id";
-            kontrolaSmena.CmbZdravstveniRadnik.SelectedItem = radnici.FirstOrDefault(r => r.Id == selektovanaSmena.ZdravstveniRadnik.Id);
 
             List<Lokacija> lokacije = Communication.Instance.UcitajListuLokacija();
             kontrolaSmena.CmbLokacija.DataSource = lokacije;
             kontrolaSmena.CmbLokacija.DisplayMember = "Naziv";
             kontrolaSmena.CmbLokacija.ValueMember = "Id";
-            kontrolaSmena.CmbLokacija.SelectedItem = lokacije.FirstOrDefault(l => l.Id == selektovanaSmena.Lokacija.Id);
+
+            var selektovaniRadnik = radnici.FirstOrDefault(r => r.Id == selektovanaSmena.ZdravstveniRadnik.Id);
+            if (selektovaniRadnik != null)
+            {
+                kontrolaSmena.CmbZdravstveniRadnik.SelectedItem = selektovaniRadnik;
+            }
+
+            var selektovanaLok = lokacije.FirstOrDefault(l => l.Id == selektovanaSmena.Lokacija.Id);
+            if (selektovanaLok != null)
+            {
+                kontrolaSmena.CmbLokacija.SelectedItem = selektovanaLok;
+            }
+
             kontrolaSmena.CmDatumSmene.SetDate(selektovanaSmena.DatumSmena);
 
             kontrolaSmena.BtnNazad.Click += BtnNazad_Click;
             kontrolaSmena.BtnSacuvaj.Click += IzmeniSmenu;
-           }
+        }
 
-        private void IzmeniSmenu(object sender, EventArgs e )
+
+        private void IzmeniSmenu(object sender, EventArgs e)
         {
             if (!(kontrolaSmena.CmbZdravstveniRadnik.SelectedItem is ZdravstveniRadnik radnik) || radnik.Id == -1)
             {
@@ -372,4 +396,3 @@ namespace Client.GUIController
         }
     }
 }
-

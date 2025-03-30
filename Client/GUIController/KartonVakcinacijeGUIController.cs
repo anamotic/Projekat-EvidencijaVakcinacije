@@ -16,6 +16,8 @@ namespace Client.GUIController
         private UCKontrolaPacijenata kontrolaPacijenata;
         private Pacijent odabraniPacijent;
         private KartonVakcinacije selektovaniKarton;
+        BindingList<Pacijent> pacijenti;
+        BindingList<Pacijent> pacijentiprikaz;
 
 
         public static KartonVakcinacijeGUIController Instance
@@ -178,11 +180,12 @@ namespace Client.GUIController
         }
         public void DodajKarton(object sender, EventArgs e)
         {
-            pregledPacijenata = new UCPregledPacijenata();
             dodajKarton = new UCDodajKarton();
 
             frmKartoniVakcinacije.Controls.Clear();
+            dodajKarton.Dock = DockStyle.Fill;
             frmKartoniVakcinacije.Controls.Add(dodajKarton);
+
             dodajKarton.BtnPacijent.Click += DodajKartonKlik;
             dodajKarton.BtnNazad.Click += BtnNazad_Click;
             dodajKarton.BtnSacuvaj.Click += DodajKartonUDgv;
@@ -199,39 +202,84 @@ namespace Client.GUIController
         {
             pregledPacijenata = new UCPregledPacijenata();
             frmKartoniVakcinacije.Controls.Clear();
+            frmKartoniVakcinacije.BackgroundImage = null;
+            pregledPacijenata.Dock = DockStyle.Fill;
             frmKartoniVakcinacije.Controls.Add(pregledPacijenata);
 
-            BindingList<Pacijent> pacijenti = new BindingList<Pacijent>(Communication.Instance.UcitajListuPacijenata());
-            pregledPacijenata.DgvPacijenti.DataSource = pacijenti;
+            List<Pacijent> sviPacijenti = Communication.Instance.UcitajListuPacijenata();
+            List<KartonVakcinacije> sviKartoni = Communication.Instance.UcitajListuKartona();
+            var pacijentiBezKartona = sviPacijenti.Where(p => !sviKartoni.Any(k => k.IDPacijent == p.Id)).ToList();
+
+            pregledPacijenata.DgvPacijenti.DataSource = new BindingList<Pacijent>(pacijentiBezKartona);
             pregledPacijenata.DgvPacijenti.Columns["Id"].Visible = false;
             pregledPacijenata.DgvPacijenti.Columns["starosnaGrupa"].Visible = false;
 
             pregledPacijenata.BtnOdaberi.Click += OdaberiPacijenta;
             pregledPacijenata.BtnNazad.Click += BtnNazad_Click;
             pregledPacijenata.BtnDodajPacijenta.Click += DodajPacijenta;
+            pregledPacijenata.textBox1.TextChanged += Pretrazi_Pacijente;
+        }
+        private void Pretrazi_Pacijente(object sender, EventArgs e)
+        {
+            List<Pacijent> sviPacijenti = Communication.Instance.UcitajListuPacijenata();
+            List<KartonVakcinacije> sviKartoni = Communication.Instance.UcitajListuKartona();
+            var pacijentiBezKartona = sviPacijenti.Where(p => !sviKartoni.Any(k => k.IDPacijent == p.Id)).ToList();
+
+            pacijenti = new BindingList<Pacijent>(pacijentiBezKartona);
+            pregledPacijenata.DgvPacijenti.DataSource = pacijenti;
+
+            string unos = pregledPacijenata.textBox1.Text.ToLower().Trim();
+
+            if (string.IsNullOrWhiteSpace(unos))
+            {
+                pacijentiprikaz = pacijenti;
+            }
+            else
+            {
+                var filtrirani = pacijenti.Where(p => (p.Ime != null && p.Ime.ToLower().Contains(unos)) || (p.Prezime != null && p.Prezime.ToLower().Contains(unos))).ToList();
+                pacijentiprikaz = new BindingList<Pacijent>(filtrirani);
+            }
+
+            pregledPacijenata.DgvPacijenti.DataSource = pacijentiprikaz;
         }
 
         private void OdaberiPacijenta(object sender, EventArgs e)
         {
-            if (pregledPacijenata.DgvPacijenti.SelectedRows.Count > 0)
+            if (pregledPacijenata.DgvPacijenti.SelectedRows.Count != 1)
             {
-                odabraniPacijent = pregledPacijenata.DgvPacijenti.SelectedRows[0].DataBoundItem as Pacijent;
-                if (odabraniPacijent != null)
-                {
-                    dodajKarton.TxtIme.Text = odabraniPacijent.Ime;
-                    dodajKarton.TxtPrezime.Text = odabraniPacijent.Prezime;
-                }
+                MessageBox.Show("Morate selektovati jednog pacijenta za otvaranje kartona!", "Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
 
+            Pacijent odabrani = pregledPacijenata.DgvPacijenti.SelectedRows[0].DataBoundItem as Pacijent;
+            if (odabrani == null)
+            {
+                MessageBox.Show("Nije moguće prepoznati selektovanog pacijenta!","Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            List<KartonVakcinacije> sviKartoni = Communication.Instance.UcitajListuKartona();
+            bool vecOtvoren = sviKartoni.Any(k => k.IDPacijent == odabrani.Id);
+            if (vecOtvoren)
+            {
+                MessageBox.Show("Za selektovanog pacijenta već postoji otvoren karton!","Greška", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            dodajKarton.TxtIme.Text = odabrani.Ime;
+            dodajKarton.TxtPrezime.Text = odabrani.Prezime;
+            odabraniPacijent = odabrani; 
+           
             frmKartoniVakcinacije.Controls.Clear();
+            dodajKarton.Dock = DockStyle.Fill;
             frmKartoniVakcinacije.Controls.Add(dodajKarton);
         }
 
         public void DodajPacijenta(object sender, EventArgs e)
         {
             kontrolaPacijenata = new UCKontrolaPacijenata();
+            kontrolaPacijenata.Dock = DockStyle.Fill;
 
             pregledPacijenata.Controls.Clear();
+            frmKartoniVakcinacije.BackgroundImage = null;
             pregledPacijenata.Controls.Add(kontrolaPacijenata);
 
             kontrolaPacijenata.BtnPotvrda.Click += DodajPacijentaKlik;
@@ -240,6 +288,7 @@ namespace Client.GUIController
             kontrolaPacijenata.BtnNazad.Click += BtnNazad_Click;
             kontrolaPacijenata.DatumRodjenja.DateChanged += DatumRodjenja_Postava;
         }
+
 
         // Izračunavanje godina i određivanje starosne grupe na osnovu izabranog datuma rodjenja
         private void DatumRodjenja_Postava(object sender, DateRangeEventArgs e)

@@ -54,7 +54,7 @@ namespace Client.UIKontrole
                 forma.btnIzmeni.Click += IzmeniPacijenta;
                 forma.btnObrisi.Click += ObrisiPacijenta;
                 forma.btnGlavna.Click += BtnGlavna_Click;
-            forma.textBox1.TextChanged += Pretrazi_Pacijente;
+                forma.textBox1.TextChanged += Pretrazi_Pacijente;
                 forma.Show();
 
             } 
@@ -64,7 +64,11 @@ namespace Client.UIKontrole
             forma.Close();
             MainGUIController.Instance.ShowFrmMain();
           }
-
+        private void BtnNazad_Click(object sender, EventArgs e)
+        {
+            forma.Close();
+            PacijentGUIController.Instance.ShowFrmPacijent();
+        }
         private void Pretrazi_Pacijente(object sender, EventArgs e)
         {
             string unos = forma.textBox1.Text.ToLower().Trim();
@@ -75,22 +79,12 @@ namespace Client.UIKontrole
             }
             else
             {
-                var filtrirani = pacijenti
-                    .Where(p => (p.Ime != null && p.Ime.ToLower().Contains(unos)) ||
-                                (p.Prezime != null && p.Prezime.ToLower().Contains(unos)))
-                    .ToList();
+                var filtrirani = pacijenti.Where(p => (p.Ime != null && p.Ime.ToLower().Contains(unos)) || (p.Prezime != null && p.Prezime.ToLower().Contains(unos))).ToList();
 
                 pacijentiprikaz = new BindingList<Pacijent>(filtrirani);
             }
 
             forma.dgvPacijenti.DataSource = pacijentiprikaz;
-        }
-
-
-        private void BtnNazad_Click(object sender, EventArgs e)
-        {
-            forma.Close();
-            PacijentGUIController.Instance.ShowFrmPacijent();
         }
 
         // Metoda za filtriranje pacijenata po starosnoj grupi

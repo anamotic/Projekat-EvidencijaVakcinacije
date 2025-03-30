@@ -41,6 +41,7 @@
             label2 = new Label();
             rbSvi = new RadioButton();
             textBox1 = new TextBox();
+            label3 = new Label();
             ((System.ComponentModel.ISupportInitialize)dgvPacijenti).BeginInit();
             SuspendLayout();
             // 
@@ -48,10 +49,10 @@
             // 
             dgvPacijenti.BackgroundColor = Color.White;
             dgvPacijenti.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvPacijenti.Location = new Point(12, 143);
+            dgvPacijenti.Location = new Point(12, 128);
             dgvPacijenti.Name = "dgvPacijenti";
             dgvPacijenti.RowHeadersWidth = 51;
-            dgvPacijenti.Size = new Size(702, 332);
+            dgvPacijenti.Size = new Size(702, 347);
             dgvPacijenti.TabIndex = 0;
             // 
             // btnDodajPacijenta
@@ -59,7 +60,7 @@
             btnDodajPacijenta.BackColor = Color.IndianRed;
             btnDodajPacijenta.Font = new Font("Footlight MT Light", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnDodajPacijenta.ForeColor = SystemColors.Control;
-            btnDodajPacijenta.Location = new Point(730, 86);
+            btnDodajPacijenta.Location = new Point(744, 128);
             btnDodajPacijenta.Name = "btnDodajPacijenta";
             btnDodajPacijenta.Size = new Size(162, 49);
             btnDodajPacijenta.TabIndex = 2;
@@ -71,7 +72,7 @@
             btnIzmeni.BackColor = Color.IndianRed;
             btnIzmeni.Font = new Font("Footlight MT Light", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnIzmeni.ForeColor = SystemColors.Control;
-            btnIzmeni.Location = new Point(730, 212);
+            btnIzmeni.Location = new Point(744, 274);
             btnIzmeni.Name = "btnIzmeni";
             btnIzmeni.Size = new Size(162, 52);
             btnIzmeni.TabIndex = 3;
@@ -126,7 +127,7 @@
             btnObrisi.BackColor = Color.IndianRed;
             btnObrisi.Font = new Font("Footlight MT Light", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnObrisi.ForeColor = SystemColors.Control;
-            btnObrisi.Location = new Point(730, 345);
+            btnObrisi.Location = new Point(744, 422);
             btnObrisi.Name = "btnObrisi";
             btnObrisi.Size = new Size(162, 53);
             btnObrisi.TabIndex = 8;
@@ -199,10 +200,22 @@
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(350, 86);
+            textBox1.Location = new Point(126, 83);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(125, 27);
+            textBox1.Size = new Size(167, 27);
             textBox1.TabIndex = 14;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.BackColor = Color.IndianRed;
+            label3.Font = new Font("Footlight MT Light", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label3.ForeColor = Color.White;
+            label3.Location = new Point(12, 86);
+            label3.Name = "label3";
+            label3.Size = new Size(96, 24);
+            label3.TabIndex = 15;
+            label3.Text = "Pretraga:";
             // 
             // FrmPacijenti
             // 
@@ -210,6 +223,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.seamless_pattern_with_flat_medical_icons_medicine_or_health_insurance_research_background_healthcare_and_laboratory_equipment_digital_paper_health_check_or_treatment_texture_vector;
             ClientSize = new Size(918, 661);
+            Controls.Add(label3);
             Controls.Add(textBox1);
             Controls.Add(rbSvi);
             Controls.Add(rbStaraOsoba);
@@ -246,6 +260,7 @@
         public Label label2;
         public RadioButton rbSvi;
         public TextBox textBox1;
+        public Label label3;
 
         public DataGridView DgvPacijenti { get => dgvPacijenti; set => dgvPacijenti = value; }
         public Button BtnDodaj { get => btnDodajPacijenta; set => btnDodajPacijenta = value; }

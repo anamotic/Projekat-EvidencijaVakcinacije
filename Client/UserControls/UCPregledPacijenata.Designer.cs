@@ -35,6 +35,8 @@ namespace Client.UserControls
             btnOdaberiPacijenta = new Button();
             btnNazad = new Button();
             label1 = new Label();
+            textBox1 = new TextBox();
+            label2 = new Label();
             ((System.ComponentModel.ISupportInitialize)dgvPacijenti).BeginInit();
             SuspendLayout();
             // 
@@ -42,7 +44,7 @@ namespace Client.UserControls
             // 
             dgvPacijenti.BackgroundColor = SystemColors.GradientInactiveCaption;
             dgvPacijenti.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvPacijenti.Location = new Point(25, 39);
+            dgvPacijenti.Location = new Point(26, 95);
             dgvPacijenti.Name = "dgvPacijenti";
             dgvPacijenti.RowHeadersWidth = 51;
             dgvPacijenti.Size = new Size(476, 361);
@@ -82,24 +84,43 @@ namespace Client.UserControls
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Footlight MT Light", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.Location = new Point(213, 16);
+            label1.Location = new Point(250, 14);
             label1.Name = "label1";
             label1.Size = new Size(78, 20);
             label1.TabIndex = 4;
             label1.Text = "Pacijenti";
+            // 
+            // textBox1
+            // 
+            textBox1.Location = new Point(119, 62);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(180, 27);
+            textBox1.TabIndex = 5;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Footlight MT Light", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label2.Location = new Point(35, 65);
+            label2.Name = "label2";
+            label2.Size = new Size(78, 20);
+            label2.TabIndex = 6;
+            label2.Text = "Pretraga";
             // 
             // UCPregledPacijenata
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ActiveCaption;
+            Controls.Add(label2);
+            Controls.Add(textBox1);
             Controls.Add(label1);
             Controls.Add(btnNazad);
             Controls.Add(btnOdaberiPacijenta);
             Controls.Add(btnDodajPacijenta);
             Controls.Add(dgvPacijenti);
             Name = "UCPregledPacijenata";
-            Size = new Size(663, 436);
+            Size = new Size(663, 489);
             ((System.ComponentModel.ISupportInitialize)dgvPacijenti).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -112,6 +133,8 @@ namespace Client.UserControls
         private Button btnOdaberiPacijenta;
         private Button btnNazad;
         private Label label1;
+        private Label label2;
+        public TextBox textBox1;
 
         public Label Label1 { get => label1; set => label1 = value; }
         public Button BtnDodajPacijenta { get => btnDodajPacijenta; set => btnDodajPacijenta = value; }
